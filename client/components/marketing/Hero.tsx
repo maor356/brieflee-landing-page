@@ -18,7 +18,7 @@ export default function Hero() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button size="lg" asChild>
                 <a href="https://brieflee.fillout.com/waitinglist" target="_blank" rel="noreferrer">
-                  Join waiting list
+                  Book a demo
                 </a>
               </Button>
               <Button variant="ghost" size="lg" asChild>

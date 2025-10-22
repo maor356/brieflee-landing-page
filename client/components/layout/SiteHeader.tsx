@@ -31,7 +31,7 @@ export default function SiteHeader() {
           </Button>
           <Button className={cn("hidden sm:inline-flex")} asChild>
             <a href="https://brieflee.fillout.com/waitinglist" target="_blank" rel="noreferrer">
-              Join waiting list
+              Book a demo
             </a>
           </Button>
         </div>

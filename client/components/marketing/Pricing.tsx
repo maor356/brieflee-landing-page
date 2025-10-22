@@ -37,7 +37,7 @@ export default function Pricing() {
                 <div className="mt-5 flex flex-col gap-2">
                   <Button size="lg" asChild>
                     <a href="https://brieflee.fillout.com/waitinglist" target="_blank" rel="noreferrer">
-                      Join waiting list
+                      Book a demo
                     </a>
                   </Button>
                   <Button size="lg" variant="outline" asChild>

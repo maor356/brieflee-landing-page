@@ -1,5 +1,6 @@
 import Hero from "@/components/marketing/Hero";
 import Logos from "@/components/marketing/Logos";
+import LandingSections from "@/components/marketing/LandingSections";
 import Features from "@/components/marketing/Features";
 import Testimonials from "@/components/marketing/Testimonials";
 import Pricing from "@/components/marketing/Pricing";
@@ -11,6 +12,7 @@ export default function Index() {
     <div className="bg-background text-foreground">
       <Hero />
       <Logos />
+      <LandingSections />
       <Features />
       <Testimonials />
       <Pricing />
