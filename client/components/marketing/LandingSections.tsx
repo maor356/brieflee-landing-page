@@ -91,21 +91,57 @@ export default function LandingSections() {
     };
   }, []);
 
+  const handleScrollTo = (id: SectionId) => {
+    const target = sectionRefs.current[id];
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <section className="bg-background mt-16 md:mt-20 lg:mt-32">
       <div className="mx-auto max-w-[104rem] px-6 pb-32 lg:px-12 lg:pb-40">
-        <div className="space-y-0">
-          {sections.map((section, index) => (
-            <LandingSectionBlock
-              key={section.id}
-              section={section}
-              isActive={activeSection === section.id}
-              isFirst={index === 0}
-              registerRef={(el) => {
-                sectionRefs.current[section.id] = el;
-              }}
-            />
-          ))}
+        <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-x-14 xl:grid-cols-[240px_minmax(0,1fr)] xl:gap-x-16">
+          <aside className="sticky top-24 hidden h-fit lg:block">
+            <nav aria-label="Section navigation" className="space-y-1">
+              {sections.map((section) => {
+                const isActive = activeSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    type="button"
+                    onClick={() => handleScrollTo(section.id)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "flex w-full items-center gap-5 border-l-2 border-transparent pl-4 py-3 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+                      isActive
+                        ? "border-l-foreground font-medium text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <span className="text-xs font-semibold tracking-[0.32em] text-muted-foreground/70">
+                      {section.navNumber}
+                    </span>
+                    <span className="tracking-tight">{section.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </aside>
+
+          <div className="space-y-0">
+            {sections.map((section, index) => (
+              <LandingSectionBlock
+                key={section.id}
+                section={section}
+                isActive={activeSection === section.id}
+                isFirst={index === 0}
+                registerRef={(el) => {
+                  sectionRefs.current[section.id] = el;
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
