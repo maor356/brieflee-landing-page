@@ -38,7 +38,7 @@ export default function FAQ() {
         <h2 className="font-serif text-3xl md:text-4xl">Questions, answered</h2>
         <p className="mt-3 text-muted-foreground">Everything you need to know about Brieflee.</p>
       </div>
-      <div className="mx-auto mt-10 max-w-2xl">
+      <div className="mx-auto mt-10 max-w-2xl text-left">
         <Accordion type="single" collapsible className="w-full">
           {FAQS.map((f, idx) => (
             <AccordionItem value={`item-${idx}`} key={f.q}>
