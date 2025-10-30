@@ -6,10 +6,9 @@ export default function SiteFooter() {
     <footer className="border-t bg-white/60 dark:bg-background/80">
       <div className="container py-10 grid gap-8 md:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">Bf</span>
-            <span className="text-lg font-semibold tracking-tight">Brieflee</span>
-          </div>
+          <Link to="/" className="text-base font-semibold text-foreground sm:text-lg">
+            Brieflee
+          </Link>
           <p className="mt-3 text-sm text-muted-foreground max-w-sm">
             Brieflee is your AI legal research copilot for Belgian law—find on-point cases, codes, and doctrine, trace citations, and save decisions, all with transparent links to the underlying sources. Search less, argue more.
           </p>

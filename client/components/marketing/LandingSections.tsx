@@ -91,87 +91,21 @@ export default function LandingSections() {
     };
   }, []);
 
-  const handleScrollTo = (id: SectionId) => {
-    const target = sectionRefs.current[id];
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
   return (
-    <section className="bg-background mt-24 lg:mt-32">
-      <div className="mx-auto max-w-[104rem] px-6 pb-40 lg:px-12 lg:pb-48">
-        <div className="grid grid-cols-1 gap-x-8 lg:grid-cols-[220px_minmax(0,1fr)] xl:gap-x-16">
-          <aside className="sticky top-24 hidden h-fit lg:block">
-            <nav aria-label="Section navigation" className="space-y-1">
-              {sections.map((section) => {
-                const isActive = activeSection === section.id;
-                return (
-                  <button
-                    key={section.id}
-                    type="button"
-                    onClick={() => handleScrollTo(section.id)}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "flex w-full items-center gap-5 border-l-2 border-transparent pl-4 py-3 text-left text-base transition focus:outline-none focus:ring-1 focus:ring-transparent focus:ring-offset-0",
-                      isActive
-                        ? "border-l-foreground font-medium text-foreground"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    <span className="text-xs font-semibold tracking-[0.32em] text-muted-foreground/70">
-                      {section.navNumber}
-                    </span>
-                    <span className="tracking-tight">{section.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </aside>
-
-          <div>
-            <nav
-              aria-label="Section navigation"
-              className="mb-12 flex gap-2 overflow-x-auto pb-2 lg:hidden"
-            >
-              {sections.map((section) => {
-                const isActive = activeSection === section.id;
-                return (
-                  <button
-                    key={section.id}
-                    type="button"
-                    onClick={() => handleScrollTo(section.id)}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "flex min-w-max items-center gap-2 rounded-xl px-4 py-2 text-sm transition focus:outline-none focus:ring-1 focus:ring-transparent focus:ring-offset-0",
-                      isActive
-                        ? "bg-muted text-foreground shadow-sm"
-                        : "bg-transparent text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    <span className="text-xs font-semibold tracking-[0.32em] text-muted-foreground/70">
-                      {section.navNumber}
-                    </span>
-                    <span className="font-medium tracking-tight">{section.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="space-y-24">
-              {sections.map((section, index) => (
-                <LandingSectionBlock
-                  key={section.id}
-                  section={section}
-                  isActive={activeSection === section.id}
-                  isFirst={index === 0}
-                  registerRef={(el) => {
-                    sectionRefs.current[section.id] = el;
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+    <section className="bg-background mt-16 md:mt-20 lg:mt-32">
+      <div className="mx-auto max-w-[104rem] px-6 pb-32 lg:px-12 lg:pb-40">
+        <div className="space-y-0">
+          {sections.map((section, index) => (
+            <LandingSectionBlock
+              key={section.id}
+              section={section}
+              isActive={activeSection === section.id}
+              isFirst={index === 0}
+              registerRef={(el) => {
+                sectionRefs.current[section.id] = el;
+              }}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -194,10 +128,10 @@ function LandingSectionBlock({ section, registerRef, isActive, isFirst }: Landin
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true, amount: 0.3 }}
-      className={cn("relative scroll-mt-24 py-24", isFirst && "pt-0")}
+      className={cn("relative scroll-mt-24 py-12 md:py-16 lg:py-20", isFirst && "pt-0")}
     >
       <div className="lg:grid lg:grid-cols-[minmax(0,1.7fr)_minmax(0,0.8fr)] lg:items-start lg:gap-x-12 xl:gap-x-16">
-        <div className="mt-12 lg:order-1 lg:mt-0 lg:-ml-10 xl:-ml-16">
+        <div className="mt-8 md:mt-10 lg:order-1 lg:mt-0 lg:-ml-10 xl:-ml-16">
           <MediaFrame
             image={section.image}
             title={section.title}
@@ -205,7 +139,7 @@ function LandingSectionBlock({ section, registerRef, isActive, isFirst }: Landin
             isActive={isActive}
           />
         </div>
-        <div className="space-y-6 lg:order-2 lg:pl-10 xl:pl-14">
+        <div className="mt-10 space-y-6 text-center md:mt-12 lg:mt-0 lg:order-2 lg:pl-10 lg:text-left xl:pl-14">
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
             {section.label.toUpperCase()}
           </p>
@@ -227,7 +161,7 @@ function LandingSectionBlock({ section, registerRef, isActive, isFirst }: Landin
           </p>
           <p
             className={cn(
-              "max-w-prose text-base leading-7 text-muted-foreground",
+              "mx-auto max-w-prose text-base leading-7 text-muted-foreground lg:mx-0",
               !isActive && "text-muted-foreground/80",
             )}
           >
@@ -257,7 +191,7 @@ function MediaFrame({ image, title, gradientClass, isActive }: MediaFrameProps) 
       <div
         aria-hidden
         className={cn(
-          "pointer-events-none absolute -inset-x-24 -top-16 h-72 rounded-full",
+          "pointer-events-none absolute inset-x-0 -top-12 h-64 rounded-full sm:-inset-x-12 sm:-top-14 sm:h-72 lg:-inset-x-24 lg:-top-16",
           gradientClass,
         )}
       />

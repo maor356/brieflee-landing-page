@@ -12,9 +12,8 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-background/80">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">Bf</span>
-          <span className="text-lg font-semibold tracking-tight">Brieflee</span>
+        <Link to="/" className="flex items-center text-base font-semibold text-foreground sm:text-lg">
+          Brieflee
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm">
           {nav.map((item) => (

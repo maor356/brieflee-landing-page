@@ -27,7 +27,7 @@ export default function Hero() {
             </div>
             <div className="mt-6 text-xs text-muted-foreground">Early access spots are limited • Apply in under two minutes</div>
           </div>
-          <div>
+          <div className="hidden md:block">
             <DemoSearch />
           </div>
         </div>
