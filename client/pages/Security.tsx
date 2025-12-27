@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +37,9 @@ const QUICK_FACTS = [
   { title: "Encryption", detail: "HTTPS enforced in transit, encryption at rest enabled" },
   { title: "Backups", detail: "Regular backups in place" },
 ] as const;
+
+const AZURE_OPENAI_DATA_PRIVACY_URL =
+  "https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-ai/openai/data-privacy" as const;
 
 type Control = {
   title: string;
@@ -95,16 +99,26 @@ const SECURITY_CONTROLS: Control[] = [
 ];
 
 const AI_BULLETS = [
-  "We use Azure OpenAI for AI-assisted research and drafting features.",
-  "We transmit only the data needed to fulfill the user’s request.",
-  "We do not use customer data to train public models.",
-  "We continuously work to minimize exposure in AI workflows.",
+  "Brieflee does not use customer inputs, outputs, or uploaded documents to train public or shared AI models.",
+  "We ensure AI-powered features are only triggered by explicit user actions.",
+  "We process only the minimum text and context required to fulfill a specific request.",
+  "Brieflee does not intentionally send direct personal identifiers (such as names or email addresses) to language models.",
 ] as const;
 
-const AI_FAQ = [
+type AiFaqItem = {
+  question: string;
+  answer: ReactNode;
+};
+
+const AI_FAQ: AiFaqItem[] = [
   {
-    question: "What data is sent to the AI model?",
-    answer: "Only the data required to complete the requested task (e.g., selected text, retrieved sources, or relevant snippets).",
+    question: "Is personal data sent to AI models?",
+    answer:
+      "Brieflee is designed to minimize personal data exposure. We do not intentionally send direct personal identifiers, and only the data required to fulfill a user request is processed.",
+  },
+  {
+    question: "Is our data used to train AI models?",
+    answer: "No. Brieflee does not use customer data to train public or shared AI models.",
   },
   {
     question: "Do you store prompts and outputs?",
@@ -113,13 +127,13 @@ const AI_FAQ = [
   },
   {
     question: "Where is AI processing performed?",
-    answer: "AI requests are processed via Azure OpenAI services.",
+    answer: "AI requests are processed using Azure OpenAI services within Microsoft’s cloud infrastructure.",
   },
   {
     question: "Can we request data deletion?",
     answer: "Yes. We support deletion requests for customer data according to our policies.",
   },
-] as const;
+];
 
 type LifecycleStep = {
   title: string;
@@ -227,9 +241,9 @@ export default function Security() {
         <div className="grid gap-10 md:grid-cols-2">
           <div className="space-y-4">
             <div>
-              <h2 className="font-serif text-3xl">AI &amp; data handling</h2>
+              <h2 className="font-serif text-3xl">Anonymity &amp; AI data minimization</h2>
               <p className="mt-2 text-muted-foreground">
-                AI features inherit the same privacy expectations as the core application.
+                AI workflows follow the same privacy expectations as the rest of the product, emphasizing anonymity and minimizing the data shared with language models.
               </p>
             </div>
             <ul className="space-y-3 text-sm text-muted-foreground">
@@ -240,6 +254,35 @@ export default function Security() {
                 </li>
               ))}
             </ul>
+            <p className="text-xs text-muted-foreground">
+              For additional information on how Azure OpenAI processes data within Microsoft’s cloud environment, see the{' '}
+              <a
+                href={AZURE_OPENAI_DATA_PRIVACY_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                official Azure OpenAI data privacy documentation
+              </a>
+              .
+            </p>
+            <Card className="border-primary/30 bg-primary/5">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-base font-semibold">Private AI processing via Azure OpenAI</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Brieflee uses Azure OpenAI for AI-powered features. AI requests are processed within Azure’s cloud environment and are not used to train public or shared models. Brieflee is designed to minimize data exposure and limit processing to what is necessary for each feature. Learn more in Microsoft’s{' '}
+                  <a
+                    href={AZURE_OPENAI_DATA_PRIVACY_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary underline-offset-4 hover:underline"
+                  >
+                    Azure OpenAI data privacy documentation
+                  </a>
+                  .
+                </p>
+              </CardHeader>
+            </Card>
           </div>
           <div>
             <Accordion type="single" collapsible className="rounded-2xl border bg-card/70">
