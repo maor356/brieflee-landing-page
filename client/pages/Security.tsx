@@ -323,9 +323,9 @@ export default function Security() {
           <div className="flex flex-wrap items-center gap-4 text-sm font-medium">
             <a
               className="text-primary underline-offset-4 hover:underline"
-              href="mailto:security@brieflee.be"
+              href="mailto:support@brieflee.be"
             >
-              security@brieflee.be
+              support@brieflee.be
             </a>
             <Link to="/privacy" className="text-muted-foreground underline-offset-4 hover:underline">
               Privacy policy
