@@ -27,6 +27,7 @@ export default function SiteFooter() {
           <ul className="space-y-2 text-muted-foreground">
             <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
             <li><Link to="/privacy" className="hover:text-foreground">Privacy</Link></li>
+            <li><Link to="/security" className="hover:text-foreground">Security</Link></li>
             <li><Link to="/terms" className="hover:text-foreground">Terms</Link></li>
           </ul>
         </div>
