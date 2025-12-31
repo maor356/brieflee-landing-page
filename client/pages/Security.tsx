@@ -177,6 +177,30 @@ const SECURITY_CONTROLS: Control[] = [
   },
 ];
 
+type AccountSecurityCard = {
+  title: string;
+  body: string;
+};
+
+const ACCOUNT_SECURITY_CARDS: AccountSecurityCard[] = [
+  {
+    title: "Managed login security",
+    body: "Brieflee uses an AWS-managed identity service to handle logins and sessions, which reduces the need for custom password handling and relies on proven infrastructure. User authentication is managed through AWS Cognito.",
+  },
+  {
+    title: "Secure sessions",
+    body: "Login sessions use time-limited tokens and secure session handling to reduce the risk of unauthorized access. Sessions expire and require re-authentication when needed.",
+  },
+  {
+    title: "Only authorized access",
+    body: "Only authenticated users can access private workspaces and projects. Application access controls ensure users can only access the data they are permitted to see.",
+  },
+  {
+    title: "Two-factor authentication (2FA)",
+    body: "Our authentication provider supports multi-factor authentication. Two-factor authentication (2FA) is part of our security roadmap.",
+  },
+];
+
 const AI_BULLETS = [
   "We do not send personal identifiers to AI models.",
   "Your data is not used to train public or shared models.",
@@ -458,6 +482,32 @@ export default function Security() {
                   </Card>
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="max-w-3xl space-y-2">
+                <h2 className="font-serif text-3xl">Account security</h2>
+                <p className="text-muted-foreground">
+                  How logins and access to your workspace are protected.
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {ACCOUNT_SECURITY_CARDS.map((card) => (
+                  <Card key={card.title} className="h-full border-muted">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base font-semibold">
+                        {card.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0 text-sm text-muted-foreground">
+                      {card.body}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Account security is continuously improved based on best practices and customer needs.
+              </p>
             </div>
 
             <div className="space-y-6">
