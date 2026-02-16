@@ -27,31 +27,16 @@ jobs:
             git fetch origin &&
             git reset --hard origin/main &&
 
-            # DIAGNOSTIC: Show old default config (it has the SSL setup we need)
-            echo '=== Old default sites-available ===' &&
-            cat /etc/nginx/sites-available/default 2>/dev/null || echo 'No default config found' &&
+            # Inject Slack webhook URL into config
+            sed -i \"s|REPLACE_WITH_SLACK_WEBHOOK|${SLACK_WEBHOOK}|g\" js/config.js &&
 
-            echo '=== All sites-available configs ===' &&
-            ls -la /etc/nginx/sites-available/ 2>/dev/null || true &&
+            # Set the correct root path in nginx config
+            sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" nginx/brieflee.conf &&
 
-            echo '=== All sites-enabled configs ===' &&
-            ls -la /etc/nginx/sites-enabled/ 2>/dev/null || true &&
+            # Replace old default config with new brieflee.conf (includes SSL)
+            sudo cp nginx/brieflee.conf /etc/nginx/sites-available/default &&
+            sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&
+            sudo rm -f /etc/nginx/sites-enabled/brieflee.conf &&
 
-            echo '=== nginx.conf includes ===' &&
-            grep -E 'include|server' /etc/nginx/nginx.conf 2>/dev/null || true &&
-
-            echo '=== Listening ports ===' &&
-            sudo ss -tlnp | grep -E 'nginx|:80|:443' || true &&
-
-            echo '=== SSL cert files ===' &&
-            sudo ls -la /etc/letsencrypt/live/ 2>/dev/null || echo 'No letsencrypt certs' &&
-            sudo ls -la /etc/ssl/certs/brieflee* 2>/dev/null || echo 'No brieflee SSL certs in /etc/ssl' &&
-
-            echo '=== Current brieflee.conf ===' &&
-            cat /etc/nginx/sites-available/brieflee.conf 2>/dev/null || echo 'No brieflee.conf' &&
-
-            # RESTORE: Re-enable old default config to restore site
-            sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default 2>/dev/null || true &&
-            sudo nginx -t && sudo systemctl reload nginx &&
-            echo '=== Restored default config ==='
+            sudo nginx -t && sudo systemctl reload nginx
           "
