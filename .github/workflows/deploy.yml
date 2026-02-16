@@ -30,10 +30,6 @@ jobs:
             # Inject Slack webhook URL into config
             sed -i \"s|REPLACE_WITH_SLACK_WEBHOOK|${SLACK_WEBHOOK}|g\" js/config.js &&
 
-            # Stop any old Node/Express process that may be serving the previous Vite app
-            (sudo pkill -f 'node.*server' || true) &&
-            (sudo pm2 stop all 2>/dev/null || true) &&
-
             # Diagnostic: list current nginx configs
             echo '=== Current sites-enabled ===' &&
             ls -la /etc/nginx/sites-enabled/ 2>/dev/null || true &&
