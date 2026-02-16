@@ -1,0 +1,658 @@
+/* ==========================================================================
+   Brieflee Custom Styles
+   Covers: Demo banner, Footer redesign, Contact page, Smooth scroll
+   ========================================================================== */
+
+/* scroll handled via JS for speed */
+
+/* ==========================================================================
+   Demo Banner (above footer, every core page)
+   ========================================================================== */
+
+.brieflee-demo-banner {
+  background: linear-gradient(145deg, #ede8e1 0%, #e4ddd4 40%, #ddd5ca 70%, #d6cdc1 100%);
+  border-radius: 20px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+/* Subtle noise texture for tactile depth */
+.brieflee-demo-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.brieflee-demo-banner.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.demo-banner-heading {
+  font-family: var(--fonts--heading-font);
+  font-size: clamp(34px, 3.6vw, 48px);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--colors-interface--dark);
+  margin: 0 0 12px;
+  letter-spacing: -0.025em;
+  position: relative;
+  max-width: 520px;
+}
+
+.demo-banner-sub {
+  font-family: var(--fonts--heading-font);
+  font-size: 15px;
+  font-weight: 400;
+  color: #7a7168;
+  margin: 0 0 36px;
+  letter-spacing: 0.01em;
+  position: relative;
+}
+
+.demo-banner-form {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.demo-banner-form-inner {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: none;
+  border-radius: 60px;
+  padding: 6px 6px 6px 28px;
+  max-width: 500px;
+  width: 100%;
+  flex: 0 1 500px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.demo-banner-form-inner:focus-within {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.demo-banner-form-inner input[type="email"] {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--fonts--heading-font);
+  font-size: 15px;
+  color: var(--colors-interface--dark);
+  padding: 12px 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.demo-banner-form-inner input[type="email"]::placeholder {
+  color: #aaa49c;
+}
+
+.demo-banner-form-inner button[type="submit"] {
+  background: var(--colors-interface--dark);
+  color: #fff;
+  border: none;
+  border-radius: 60px;
+  padding: 13px 28px;
+  font-family: var(--fonts--heading-font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.demo-banner-form-inner button[type="submit"]:hover {
+  background: #333;
+  transform: scale(1.02);
+}
+
+.demo-banner-success,
+.demo-banner-error {
+  display: none;
+  font-family: var(--fonts--heading-font);
+  font-size: 15px;
+  margin-top: 16px;
+  position: relative;
+}
+
+.demo-banner-success {
+  color: #2d6a2e;
+}
+
+.demo-banner-error {
+  color: #b33a3a;
+}
+
+/* ==========================================================================
+   Redesigned Footer
+   ========================================================================== */
+
+.footer-container.brieflee-footer {
+  max-width: 100%;
+  align-items: stretch;
+  align-self: stretch;
+  padding: 64px 0 32px;
+}
+
+.brieflee-footer-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  margin-bottom: 48px;
+}
+
+.brieflee-footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 380px;
+}
+
+.brieflee-footer-left .logo-footer {
+  /* inherits existing logo-footer styles */
+}
+
+.brieflee-footer-left .footer-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.brieflee-footer-subscribe {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 60px;
+  padding: 4px 4px 4px 20px;
+  max-width: 360px;
+}
+
+.brieflee-footer-subscribe input[type="email"] {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  color: #fff;
+  padding: 10px 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.brieflee-footer-subscribe input[type="email"]::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.brieflee-footer-subscribe button[type="submit"] {
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 60px;
+  padding: 10px 22px;
+  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.brieflee-footer-subscribe button[type="submit"]:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.brieflee-footer-subscribe-note {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.4;
+}
+
+.brieflee-footer-subscribe-note a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: underline;
+}
+
+.brieflee-footer-subscribe-success,
+.brieflee-footer-subscribe-error {
+  display: none;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.brieflee-footer-subscribe-success {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.brieflee-footer-subscribe-error {
+  color: #e88;
+}
+
+.brieflee-footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.brieflee-footer-col-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.brieflee-footer-links a {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.brieflee-footer-links a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.brieflee-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brieflee-footer-copyright {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.brieflee-footer-bottom .social-links {
+  /* inherits existing social-links styles */
+}
+
+/* ==========================================================================
+   Comparison Table — Aligned Rows
+   ========================================================================== */
+
+.comparison-table-item {
+  height: 100%;
+}
+
+.comparison-list {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  flex: 1;
+  gap: 0;
+}
+
+.comparison-list-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* ==========================================================================
+   Contact Page — Split Layout
+   ========================================================================== */
+
+.contact-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+  padding: 80px 0 40px;
+}
+
+.contact-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 24px;
+}
+
+.contact-hero-heading {
+  font-family: 'Noto Serif Georgian', Georgia, serif;
+  font-size: 52px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.contact-value-props {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.contact-value-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.contact-value-icon {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.contact-value-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: #fff;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.contact-value-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.contact-value-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #666;
+}
+
+.contact-form-glass {
+  background: linear-gradient(135deg, rgba(245, 230, 211, 0.35), rgba(232, 213, 192, 0.2) 50%, rgba(212, 196, 176, 0.15));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 185, 154, 0.2);
+  border-radius: 20px;
+  padding: 40px;
+}
+
+.contact-form-glass .heading-h5 {
+  margin-bottom: 24px;
+}
+
+.contact-form-glass .form-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.contact-form-glass .input-group {
+  margin-bottom: 16px;
+}
+
+.contact-form-glass label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.contact-form-glass .form-input {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form-glass .form-input:focus {
+  border-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+.contact-form-glass .text-area {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contact-form-glass .contact-privacy-note {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.contact-form-glass .contact-privacy-note a {
+  color: #666;
+  text-decoration: underline;
+}
+
+.contact-form-glass .button {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Tablet — 991px */
+@media screen and (max-width: 991px) {
+  .brieflee-demo-banner {
+    padding: 56px 32px;
+    min-height: 340px;
+    border-radius: 16px;
+  }
+
+  .demo-banner-heading {
+    font-size: 36px;
+  }
+
+  .brieflee-footer-top {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .brieflee-footer-left {
+    max-width: 100%;
+  }
+
+  .brieflee-footer-links {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .contact-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 48px 0 24px;
+  }
+
+  .contact-hero-heading {
+    font-size: 42px;
+  }
+}
+
+/* Mobile landscape — 767px */
+@media screen and (max-width: 767px) {
+  .brieflee-demo-banner {
+    padding: 48px 24px;
+    border-radius: 14px;
+    min-height: 300px;
+  }
+
+  .demo-banner-heading {
+    font-size: 28px;
+  }
+
+  .demo-banner-sub {
+    font-size: 14px;
+  }
+
+  .demo-banner-form-inner {
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .demo-banner-form-inner input[type="email"] {
+    padding: 10px 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .demo-banner-form-inner button[type="submit"] {
+    width: 100%;
+    padding: 14px 28px;
+  }
+
+  .brieflee-footer-links {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 24px;
+  }
+
+  .brieflee-footer-bottom {
+    flex-direction: column-reverse;
+    gap: 16px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .contact-hero-heading {
+    font-size: 36px;
+  }
+
+  .contact-form-glass .form-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile portrait — 478px */
+@media screen and (max-width: 478px) {
+  .brieflee-demo-banner {
+    padding: 40px 16px;
+    border-radius: 12px;
+    min-height: 280px;
+  }
+
+  .demo-banner-heading {
+    font-size: 24px;
+  }
+
+  .brieflee-footer-subscribe {
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .brieflee-footer-subscribe input[type="email"] {
+    padding: 10px 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .brieflee-footer-subscribe button[type="submit"] {
+    width: 100%;
+    padding: 12px 22px;
+  }
+
+  .contact-hero-heading {
+    font-size: 30px;
+  }
+
+  .contact-form-glass {
+    padding: 24px;
+    border-radius: 16px;
+  }
+}
+
+/* ==========================================================================
+   Language Switcher
+   ========================================================================== */
+
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.language-switcher__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-family: var(--fonts--heading-font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.6);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.language-switcher__link:hover {
+  color: #000;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.language-switcher__link.is-active {
+  color: #fff;
+  background: #000;
+}
+
+.language-switcher--mobile {
+  display: none;
+  margin-top: 12px;
+  width: fit-content;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.nav-buttons .language-switcher {
+  flex: 0 0 auto;
+}
+
+@media screen and (max-width: 991px) {
+  .nav-buttons .language-switcher {
+    display: none;
+  }
+
+  .language-switcher--mobile {
+    display: inline-flex;
+  }
+}

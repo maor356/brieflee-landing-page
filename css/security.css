@@ -1,0 +1,232 @@
+/* Security page — minimal additions only */
+
+/* ==========================================================================
+   Scroll-triggered fade-in (matches Webflow's translate3d(0,24px,0) effect)
+   ========================================================================== */
+.fade-in-on-scroll {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-on-scroll.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Trust badges row in hero */
+.security-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.security-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--colors-interface--border);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--colors-interface--dark);
+  white-space: nowrap;
+}
+
+/* Status badges for roadmap */
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.status-badge.in-progress {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.planned {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Roadmap card header */
+.roadmap-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+/* Infrastructure table — styled to match card aesthetic */
+.infra-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--gaps-radius--default-border-radius);
+  overflow: hidden;
+  border: 1px solid var(--colors-interface--border);
+  font-size: 15px;
+}
+
+.infra-table th,
+.infra-table td {
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--colors-interface--border);
+}
+
+.infra-table th {
+  background: var(--colors-interface--neutral);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--colors-interface--body-text);
+}
+
+.infra-table tr:last-child td {
+  border-bottom: none;
+}
+
+.infra-table td:first-child {
+  font-weight: 500;
+  color: var(--colors-interface--dark);
+}
+
+/* Lifecycle flow using card pattern */
+.lifecycle-flow {
+  display: flex;
+  gap: 0;
+}
+
+.lifecycle-step {
+  flex: 1;
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px solid var(--colors-interface--border);
+  border-right: none;
+  background: var(--colors-interface--white);
+}
+
+.lifecycle-step:first-child {
+  border-radius: var(--gaps-radius--default-border-radius) 0 0 var(--gaps-radius--default-border-radius);
+}
+
+.lifecycle-step:last-child {
+  border-radius: 0 var(--gaps-radius--default-border-radius) var(--gaps-radius--default-border-radius) 0;
+  border-right: 1px solid var(--colors-interface--border);
+}
+
+.lifecycle-step .step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--colors-interface--neutral);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--colors-interface--dark);
+}
+
+/* Callout box */
+.security-callout {
+  padding: 24px 28px;
+  border-radius: var(--gaps-radius--default-border-radius);
+  background: var(--colors-interface--white);
+  border: 1px solid var(--colors-interface--border);
+  margin-top: 24px;
+  box-shadow: 0 2px 6px #0000000f;
+}
+
+/* Contact links */
+.security-contact-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.security-contact-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--gaps-radius--default-border-radius);
+  border: 1px solid var(--colors-interface--border);
+  background: var(--colors-interface--white);
+  color: var(--colors-interface--dark);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: border-color 0.15s;
+}
+
+.security-contact-links a:hover {
+  border-color: var(--colors-interface--dark);
+}
+
+/* Commitment list */
+.security-commitments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.security-commitments li {
+  padding: 14px 20px;
+  border-radius: var(--gaps-radius--default-border-radius);
+  background: var(--colors-interface--white);
+  border: 1px solid var(--colors-interface--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 2px 6px #0000000f;
+}
+
+.security-commitments li img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Footnote */
+.security-footnote {
+  font-size: 13px;
+  color: var(--colors-interface--body-text);
+  margin-top: 16px;
+  opacity: 0.6;
+}
+
+/* Responsive — lifecycle flow stacks on mobile */
+@media screen and (max-width: 767px) {
+  .lifecycle-flow {
+    flex-direction: column;
+  }
+
+  .lifecycle-step {
+    border-right: 1px solid var(--colors-interface--border);
+    border-bottom: none;
+  }
+
+  .lifecycle-step:first-child {
+    border-radius: var(--gaps-radius--default-border-radius) var(--gaps-radius--default-border-radius) 0 0;
+  }
+
+  .lifecycle-step:last-child {
+    border-radius: 0 0 var(--gaps-radius--default-border-radius) var(--gaps-radius--default-border-radius);
+    border-bottom: 1px solid var(--colors-interface--border);
+  }
+}

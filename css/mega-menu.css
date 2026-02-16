@@ -1,0 +1,768 @@
+/* ============================================
+   BRIEFLEE MEGA MENU — Product Dropdown
+   Full-width editorial panel with split layout:
+   links + static preview image
+   ============================================ */
+
+/* --- Override Webflow dropdown (desktop only) --- */
+@media screen and (min-width: 992px) {
+  .dropdown.w-dropdown {
+    position: static;
+  }
+
+  .dropdown-wrapper.w-dropdown-list {
+    position: static;
+    background: transparent;
+  }
+
+  .dropdown-wide-wrapper {
+    position: static !important;
+    top: auto !important;
+    transform: none !important;
+  }
+
+  .dropdown-body {
+    display: none !important;
+  }
+}
+
+/* --- Mega Menu Container --- */
+.mega-menu {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 0.35s;
+}
+
+.mega-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 0s;
+}
+
+/* --- Backdrop --- */
+.mega-menu__backdrop {
+  position: fixed;
+  inset: 0;
+  top: var(--navbar-height);
+  background: rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-menu.is-open .mega-menu__backdrop {
+  opacity: 1;
+}
+
+/* --- Panel --- */
+.mega-menu__panel {
+  position: relative;
+  background: #fff;
+  border-bottom: 1px solid var(--colors-interface--border-dark);
+  transform: translateY(-8px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.mega-menu.is-open .mega-menu__panel {
+  transform: translateY(0);
+}
+
+/* --- Inner layout --- */
+.mega-menu__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* --- Left: Links column --- */
+.mega-menu__links {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 48px 40px 56px;
+  gap: 0;
+}
+
+/* --- Individual link item --- */
+.mega-menu__item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0;
+  text-decoration: none;
+  color: var(--colors-interface--dark);
+  position: relative;
+  cursor: pointer;
+  /* Stagger reveal: start hidden */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-menu__item:hover .mega-menu__title {
+  color: var(--colors-interface--dark);
+}
+
+.mega-menu__title::after {
+  content: ' \2192';
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mega-menu__item:hover .mega-menu__title::after {
+  opacity: 1;
+}
+
+.mega-menu__item:hover .mega-menu__desc {
+  color: #666;
+}
+
+
+/* Stagger reveal: animate in when open */
+.mega-menu.is-open .mega-menu__item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mega-menu.is-open .mega-menu__item:nth-child(1) { transition-delay: 0.03s; }
+.mega-menu.is-open .mega-menu__item:nth-child(2) { transition-delay: 0.06s; }
+.mega-menu.is-open .mega-menu__item:nth-child(3) { transition-delay: 0.09s; }
+.mega-menu.is-open .mega-menu__item:nth-child(4) { transition-delay: 0.12s; }
+.mega-menu.is-open .mega-menu__item:nth-child(5) { transition-delay: 0.15s; }
+.mega-menu.is-open .mega-menu__item:nth-child(6) { transition-delay: 0.18s; }
+
+/* --- Item text --- */
+.mega-menu__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.mega-menu__title {
+  font-family: var(--fonts--heading-font);
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #888;
+  letter-spacing: 0;
+  transition: color 0.2s ease;
+}
+
+.mega-menu__desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #aaa;
+  margin-top: 1px;
+  transition: color 0.2s ease;
+}
+
+/* --- Right: Preview area (static) --- */
+.mega-menu__preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 56px 40px 24px;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+
+.mega-menu.is-open .mega-menu__preview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stacked image container for crossfade */
+.mega-menu__preview-images {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.mega-menu__preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.mega-menu__preview-image--default {
+  position: relative;
+  opacity: 1;
+}
+
+.mega-menu__preview-image--hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.mega-menu__preview-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mega-menu__preview-title {
+  font-family: var(--fonts--heading-font);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--colors-interface--dark);
+}
+
+.mega-menu__preview-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #666;
+}
+
+/* --- Dropdown toggle active state --- */
+.dropdown-toggle.mega-active {
+  opacity: 0.5;
+}
+
+.dropdown-toggle.mega-active .dropdown-indicator {
+  background: linear-gradient(
+    135deg,
+    var(--colors-brand--gradient-1),
+    var(--colors-brand--gradient-2)
+  );
+}
+
+/* ============================================
+   HERO SECTION — Editorial redesign
+   ============================================ */
+
+/* Override bento grid — constrain to container width + 3-column */
+.bento-thirds {
+  grid-template-columns: 1fr 1fr 1fr;
+  max-width: var(--content-width--container);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 991px) {
+  .bento-thirds {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bento-thirds {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Staggered entrance */
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Hero section — tighter spacing to match Artifact template --- */
+.section > .container > .vertical-section > .content---m.align-center > .vertical-content.align-center {
+  gap: 16px;
+}
+
+/* --- Hero eyebrow — matches Artifact template exactly --- */
+@keyframes eyebrowReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+}
+
+.hero-eyebrow {
+  font-family: var(--fonts--badge-font);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4em;
+  color: var(--colors-interface--dark);
+  opacity: 0;
+  text-align: center;
+  margin: 0 0 -6px;
+  padding: 0;
+  animation: eyebrowReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.02s forwards;
+}
+
+/* --- Hero heading — use standard heading-h1 (Geist sans) + animation --- */
+.heading-h1.hero-animated {
+  text-align: center;
+  padding-bottom: 0;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+/* --- Hero subtitle — matches Artifact template exactly --- */
+.hero-animated--sub {
+  font-family: var(--fonts--body-font);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4em;
+  color: var(--colors-interface--dark);
+  font-feature-settings: "ss01" 1, "ss03" 1, "ss04" 1;
+  text-align: center;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+}
+
+/* --- Hero button — fade-in entrance --- */
+.hero-animated--btn {
+  margin-top: 4px;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+/* --- Hero center alignment --- */
+.section .vertical-content.align-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+@media screen and (max-width: 767px) {
+  .hero-heading {
+    font-size: 40px;
+  }
+
+  .hero-accent {
+    font-size: 24px;
+  }
+}
+
+/* --- "Clear boundaries" section — add breathing room below heading --- */
+.section.bg-neutral .vertical-section.align-center {
+  gap: 48px;
+}
+
+.section.bg-neutral .vertical-section {
+  gap: 48px;
+}
+
+/* ============================================
+   ABOUT US HERO — Editorial serif with warm gradient
+   ============================================ */
+
+.about-hero {
+  background: linear-gradient(
+    180deg,
+    #faf6f0 0%,
+    #f5efe6 40%,
+    var(--colors-interface--neutral-1) 100%
+  );
+  padding-top: 120px;
+  padding-bottom: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle noise texture overlay for depth */
+.about-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Spaced uppercase label — refined, editorial */
+.about-hero__label {
+  font-family: var(--fonts--heading-font);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9e978c;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+}
+
+/* Main heading — dramatic Instrument Serif */
+.about-hero__heading {
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(40px, 5.5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #1a1a18;
+  text-align: center;
+  margin: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+/* Italic emphasis on "actually" — the editorial flourish */
+.about-hero__heading em {
+  font-style: italic;
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+/* Subtitle — understated serif italic tagline */
+.about-hero__subtitle {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 400;
+  line-height: 1.4;
+  color: #9e978c;
+  letter-spacing: 0.02em;
+  text-align: center;
+  margin: 8px 0 0;
+  padding: 0;
+  position: relative;
+  opacity: 0;
+  animation: heroReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.32s forwards;
+}
+
+/* Thin decorative rule under subtitle — draws itself in */
+.about-hero__subtitle::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: #c5bfb6;
+  margin: 24px auto 0;
+  transform: scaleX(0);
+  transform-origin: center;
+  animation: accentRule 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
+}
+
+@media screen and (max-width: 767px) {
+  .about-hero {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .about-hero__heading {
+    font-size: 36px;
+  }
+
+  .about-hero__subtitle {
+    font-size: 18px;
+  }
+}
+
+/* ============================================
+   ABOUT US — Timeline & team spacing fixes
+   ============================================ */
+
+/* Gap between timeline heading and timeline markers */
+.bg-white-to-neutral .vertical-section {
+  gap: 48px;
+}
+
+/* Spacing above subscribe section */
+.subscribe-box-section {
+  margin-top: 48px;
+}
+
+/* Team headshots — consistent square crop */
+.team-member-small-image {
+  aspect-ratio: 1;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* ============================================
+   RESPONSIVE: Hide mega menu on tablet/mobile
+   ============================================ */
+@media screen and (max-width: 991px) {
+  .mega-menu {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   FEATURE SHOWCASE — Auto-rotating product tabs
+   Refined editorial design matching Alice reference
+   ============================================ */
+
+.feature-showcase-section {
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+.feature-showcase {
+  display: grid;
+  grid-template-columns: 1fr 872px;
+  gap: 80px;
+  align-items: stretch;
+}
+
+/* --- Left column: stretches to match image height --- */
+.feature-showcase__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* --- Heading: large editorial Geist, generous measure --- */
+.feature-showcase__heading {
+  font-family: var(--fonts--heading-font);
+  font-size: clamp(32px, 3.2vw, 46px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--colors-interface--dark);
+  margin: 0 0 48px;
+  padding: 0;
+  max-width: 480px;
+}
+
+.feature-showcase__accent {
+  color: var(--colors-brand--gradient-3);
+}
+
+/* --- Tabs container --- */
+.feature-showcase__tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Individual tab --- */
+.feature-showcase__tab {
+  position: relative;
+  padding: 22px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #e0dcd8;
+}
+
+.feature-showcase__tab:first-child {
+  border-top: none;
+}
+
+/* --- Tab title --- */
+.feature-showcase__tab-title {
+  font-family: var(--fonts--heading-font);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #c5c0b8;
+  transition: color 0.35s ease, font-weight 0.2s ease;
+  user-select: none;
+}
+
+.feature-showcase__tab.is-active .feature-showcase__tab-title {
+  color: var(--colors-interface--dark);
+  font-weight: 500;
+}
+
+.feature-showcase__tab:not(.is-active):hover .feature-showcase__tab-title {
+  color: #8a857e;
+}
+
+/* --- Tab body: grid-rows expand (no max-height jank) --- */
+.feature-showcase__tab-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-showcase__tab.is-active .feature-showcase__tab-body {
+  grid-template-rows: 1fr;
+}
+
+/* --- Tab description --- */
+.feature-showcase__tab-desc {
+  font-family: var(--fonts--body-font);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--colors-interface--colors-text--body-text);
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  max-width: 440px;
+  padding-top: 0;
+}
+
+.feature-showcase__tab.is-active .feature-showcase__tab-desc {
+  opacity: 1;
+  padding-top: 10px;
+}
+
+/* --- Progress bar: sits at the bottom border of active tab --- */
+.feature-showcase__progress {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: transparent;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-showcase__tab.is-active .feature-showcase__progress {
+  opacity: 1;
+}
+
+.feature-showcase__progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--colors-interface--dark);
+}
+
+/* --- CTA button: full-width, large pill --- */
+.feature-showcase__cta.button {
+  width: 100%;
+  max-width: 480px;
+  height: 56px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* --- Right column: image stage --- */
+.feature-showcase__right {
+  position: relative;
+  width: 872px;
+  max-width: 100%;
+  height: 766px;
+  align-self: stretch;
+}
+
+.feature-showcase__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 872px;
+  height: 766px;
+  max-width: 100%;
+  object-fit: cover;
+  object-position: top left;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.04))
+          drop-shadow(0 16px 40px rgba(0, 0, 0, 0.06));
+}
+
+.feature-showcase__image.is-active {
+  opacity: 1;
+}
+
+/* ---- Responsive: Tablet ---- */
+@media screen and (max-width: 991px) {
+  .feature-showcase-section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .feature-showcase {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  /* Show image above tabs on tablet/mobile */
+  .feature-showcase__right {
+    order: -1;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 872 / 766;
+  }
+
+  .feature-showcase__image {
+    width: 100%;
+    height: 100%;
+  }
+
+  .feature-showcase__heading {
+    max-width: 100%;
+    margin-bottom: 36px;
+  }
+
+  .feature-showcase__tab-desc {
+    max-width: 100%;
+  }
+
+  .feature-showcase__cta.button {
+    max-width: 100%;
+  }
+}
+
+/* ---- Responsive: Mobile ---- */
+@media screen and (max-width: 767px) {
+  .feature-showcase-section {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .feature-showcase {
+    gap: 32px;
+  }
+
+  .feature-showcase__right {
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .feature-showcase__image {
+    border-radius: 12px;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .feature-showcase__heading {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+
+  .feature-showcase__tab {
+    padding: 18px 0;
+  }
+
+  .feature-showcase__tab-title {
+    font-size: 20px;
+  }
+
+  .feature-showcase__tab-desc {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .feature-showcase__tabs {
+    margin-bottom: 24px;
+  }
+
+  .feature-showcase__cta.button {
+    height: 50px;
+  }
+}
