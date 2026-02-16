@@ -30,16 +30,36 @@ jobs:
             # Inject Slack webhook URL into config
             sed -i \"s|REPLACE_WITH_SLACK_WEBHOOK|${SLACK_WEBHOOK}|g\" js/config.js &&
 
+            # Stop any old Node/Express process that may be serving the previous Vite app
+            (sudo pkill -f 'node.*server' || true) &&
+            (sudo pm2 stop all 2>/dev/null || true) &&
+
+            # Diagnostic: list current nginx configs
+            echo '=== Current sites-enabled ===' &&
+            ls -la /etc/nginx/sites-enabled/ 2>/dev/null || true &&
+            echo '=== Current conf.d ===' &&
+            ls -la /etc/nginx/conf.d/ 2>/dev/null || true &&
+
+            # Set the correct root path in nginx config
+            sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" nginx/brieflee.conf &&
+
             # Install nginx config - try sites-available first, fall back to conf.d
             if [ -d /etc/nginx/sites-available ]; then
+              # Remove old default config that may proxy to Node
+              sudo rm -f /etc/nginx/sites-enabled/default &&
               sudo cp nginx/brieflee.conf /etc/nginx/sites-available/brieflee.conf &&
               sudo ln -sf /etc/nginx/sites-available/brieflee.conf /etc/nginx/sites-enabled/brieflee.conf
             elif [ -d /etc/nginx/conf.d ]; then
+              sudo rm -f /etc/nginx/conf.d/default.conf &&
               sudo cp nginx/brieflee.conf /etc/nginx/conf.d/brieflee.conf
             else
               echo 'ERROR: Could not find nginx config directory' &&
               exit 1
             fi &&
+
+            # List configs after change
+            echo '=== Updated sites-enabled ===' &&
+            ls -la /etc/nginx/sites-enabled/ 2>/dev/null || true &&
 
             sudo nginx -t && sudo systemctl reload nginx
           "
