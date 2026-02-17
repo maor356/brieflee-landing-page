@@ -647,6 +647,12 @@
   flex: 0 0 auto;
 }
 
+.nav-buttons .nav-button-2 {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  overflow: visible;
+}
+
 @media screen and (max-width: 991px) {
   .nav-buttons .language-switcher {
     display: none;
