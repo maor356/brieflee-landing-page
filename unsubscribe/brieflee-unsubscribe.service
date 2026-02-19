@@ -1,0 +1,15 @@
+[Unit]
+Description=Brieflee Unsubscribe Handler
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 __DEPLOY_ROOT__/unsubscribe/server.py
+WorkingDirectory=__DEPLOY_ROOT__/unsubscribe
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

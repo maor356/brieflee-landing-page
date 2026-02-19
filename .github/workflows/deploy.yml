@@ -38,5 +38,12 @@ jobs:
             sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&
             sudo rm -f /etc/nginx/sites-enabled/brieflee.conf &&
 
+            # Set up unsubscribe service
+            sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" unsubscribe/brieflee-unsubscribe.service &&
+            sudo cp unsubscribe/brieflee-unsubscribe.service /etc/systemd/system/brieflee-unsubscribe.service &&
+            sudo systemctl daemon-reload &&
+            sudo systemctl enable brieflee-unsubscribe &&
+            sudo systemctl restart brieflee-unsubscribe &&
+
             sudo nginx -t && sudo systemctl reload nginx
           "
