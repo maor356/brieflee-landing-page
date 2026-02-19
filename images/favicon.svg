@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark square background matching Harvey AI exactly -->
+  <rect width="32" height="32" rx="5" ry="5" fill="#1A1A1A"/>
+
+  <!-- Bold white "B" letterform matching Harvey's H proportions exactly -->
+  <path d="M 9.5 8 L 9.5 24 L 17.5 24 C 20.8 24 23 22 23 19 C 23 16.8 21.8 15.2 20 15 C 21.5 14.5 22.5 13.2 22.5 11.5 C 22.5 8.8 20.5 8 17 8 L 9.5 8 Z
+           M 13 10.8 L 16.5 10.8 C 18 10.8 19 11.5 19 12.8 C 19 14.1 18 14.8 16.5 14.8 L 13 14.8 Z
+           M 13 17.2 L 17 17.2 C 18.7 17.2 19.8 18 19.8 19.3 C 19.8 20.6 18.7 21.2 17 21.2 L 13 21.2 Z"
+        fill="#FFFFFF"
+        stroke="#FFFFFF"
+        stroke-width="0.3"/>
+</svg>
