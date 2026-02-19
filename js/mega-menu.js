@@ -5,46 +5,154 @@
 (function () {
   'use strict';
 
-  var DEFAULT_PREVIEW = 'images/platform-preview.jpeg';
-
-  var MENU_ITEMS = [
-    {
-      title: 'Overview',
-      desc: 'A unified view of how Brieflee\'s products work together to support your entire practice.',
-      href: 'index.html',
-      preview: null
+  var TRANSLATIONS = {
+    'en': {
+      items: [
+        {
+          title: 'Overview',
+          desc: 'A unified view of how Brieflee\'s products work together to support your entire practice.',
+          href: 'index.html',
+          preview: null
+        },
+        {
+          title: 'Research',
+          desc: 'Research complex legal, regulatory, and tax questions across jurisdictions and domains.',
+          href: 'legal-research.html',
+          preview: 'images/Search.png'
+        },
+        {
+          title: 'Analyze',
+          desc: 'Ask questions, analyze documents, and surface key insights with domain-specific AI.',
+          href: 'workflows.html',
+          preview: null
+        },
+        {
+          title: 'Argue',
+          desc: 'Build structured, source-grounded arguments for briefs, motions, and memoranda.',
+          href: 'features-1.html',
+          preview: null
+        },
+        {
+          title: 'Workflows',
+          desc: 'Run pre-built workflows or build your own, tailored to your firm\'s needs.',
+          href: 'workflows.html',
+          preview: 'images/Gradient-3.png'
+        },
+        {
+          title: 'Draft',
+          desc: 'Generate structured, source-based drafts and refine them directly in Brieflee.',
+          href: 'draft.html',
+          preview: 'images/Frame.png'
+        }
+      ],
+      captionTitle: 'The Brieflee Platform',
+      captionDesc: 'One workspace for legal research, analysis, and drafting \u2014 built for the way lawyers actually work.'
     },
-    {
-      title: 'Research',
-      desc: 'Research complex legal, regulatory, and tax questions across jurisdictions and domains.',
-      href: 'legal-research.html',
-      preview: 'images/Search.png'
+    'nl-be': {
+      items: [
+        {
+          title: 'Overzicht',
+          desc: 'Een ge\u00efntegreerd beeld van hoe de Brieflee-producten samenwerken ter ondersteuning van uw volledige praktijk.',
+          href: 'index.html',
+          preview: null
+        },
+        {
+          title: 'Onderzoek',
+          desc: 'Onderzoek complexe juridische, reglementaire en fiscale vragen over rechtsgebieden en domeinen heen.',
+          href: 'legal-research.html',
+          preview: 'images/Search.png'
+        },
+        {
+          title: 'Analyseren',
+          desc: 'Stel vragen, analyseer documenten en onthul sleutelinzichten met domeinspecifieke AI.',
+          href: 'workflows.html',
+          preview: null
+        },
+        {
+          title: 'Bepleiten',
+          desc: 'Bouw gestructureerde, brongebaseerde argumenten op voor memories, verzoekschriften en pleidooien.',
+          href: '../features-1.html',
+          preview: null
+        },
+        {
+          title: 'Workflows',
+          desc: 'Gebruik voorgebouwde workflows of bouw uw eigen, op maat van de noden van uw kantoor.',
+          href: 'workflows.html',
+          preview: 'images/Gradient-3.png'
+        },
+        {
+          title: 'Opstellen',
+          desc: 'Genereer gestructureerde, brongebaseerde ontwerpen en verfijn ze rechtstreeks in Brieflee.',
+          href: 'draft.html',
+          preview: 'images/Frame.png'
+        }
+      ],
+      captionTitle: 'Het Brieflee Platform',
+      captionDesc: 'E\u00e9n werkruimte voor juridisch onderzoek, analyse en redactie \u2014 gebouwd voor de manier waarop advocaten daadwerkelijk werken.'
     },
-    {
-      title: 'Analyze',
-      desc: 'Ask questions, analyze documents, and surface key insights with domain-specific AI.',
-      href: 'workflows.html',
-      preview: null
-    },
-    {
-      title: 'Argue',
-      desc: 'Build structured, source-grounded arguments for briefs, motions, and memoranda.',
-      href: 'features-1.html',
-      preview: null
-    },
-    {
-      title: 'Workflows',
-      desc: 'Run pre-built workflows or build your own, tailored to your firm\'s needs.',
-      href: 'workflows.html',
-      preview: 'images/Gradient-3.png'
-    },
-    {
-      title: 'Draft',
-      desc: 'Generate structured, source-based drafts and refine them directly in Brieflee.',
-      href: 'draft.html',
-      preview: 'images/Frame.png'
+    'fr-be': {
+      items: [
+        {
+          title: 'Vue d\u2019ensemble',
+          desc: 'Une vue unifi\u00e9e de la fa\u00e7on dont les produits Brieflee fonctionnent ensemble pour soutenir l\u2019ensemble de votre pratique.',
+          href: 'index.html',
+          preview: null
+        },
+        {
+          title: 'Recherche',
+          desc: 'Recherchez des questions juridiques, r\u00e9glementaires et fiscales complexes dans plusieurs juridictions et domaines.',
+          href: 'legal-research.html',
+          preview: 'images/Search.png'
+        },
+        {
+          title: 'Analyser',
+          desc: 'Posez des questions, analysez des documents et faites \u00e9merger des informations cl\u00e9s gr\u00e2ce \u00e0 une IA sp\u00e9cialis\u00e9e dans votre domaine.',
+          href: 'workflows.html',
+          preview: null
+        },
+        {
+          title: 'Argumenter',
+          desc: 'Construisez des arguments structur\u00e9s et fond\u00e9s sur des sources pour des m\u00e9moires, requ\u00eates et conclusions.',
+          href: '../features-1.html',
+          preview: null
+        },
+        {
+          title: 'Flux de travail',
+          desc: 'Utilisez des flux de travail pr\u00e9con\u00e7us ou cr\u00e9ez les v\u00f4tres, adapt\u00e9s aux besoins de votre cabinet.',
+          href: 'workflows.html',
+          preview: 'images/Gradient-3.png'
+        },
+        {
+          title: 'R\u00e9diger',
+          desc: 'G\u00e9n\u00e9rez des projets structur\u00e9s et fond\u00e9s sur des sources, et affinez-les directement dans Brieflee.',
+          href: 'draft.html',
+          preview: 'images/Frame.png'
+        }
+      ],
+      captionTitle: 'La Plateforme Brieflee',
+      captionDesc: 'Un espace de travail unique pour la recherche juridique, l\u2019analyse et la r\u00e9daction \u2014 con\u00e7u pour la fa\u00e7on dont les avocats travaillent r\u00e9ellement.'
     }
-  ];
+  };
+
+  function getLocale() {
+    var parts = window.location.pathname.split('/').filter(Boolean);
+    var first = parts[0] || '';
+    if (first === 'nl-be' || first === 'fr-be') return first;
+    return 'en';
+  }
+
+  var locale = getLocale();
+  var t = TRANSLATIONS[locale] || TRANSLATIONS['en'];
+  var imgBase = (locale === 'en') ? '' : '../';
+  var DEFAULT_PREVIEW = imgBase + 'images/platform-preview.jpeg';
+  var MENU_ITEMS = t.items.map(function (item) {
+    return {
+      title: item.title,
+      desc: item.desc,
+      href: item.href,
+      preview: item.preview ? imgBase + item.preview : null
+    };
+  });
 
   var OPEN_DELAY = 80;
   var CLOSE_DELAY = 250;
@@ -145,8 +253,8 @@
     var caption = document.createElement('div');
     caption.className = 'mega-menu__preview-caption';
     caption.innerHTML =
-      '<div class="mega-menu__preview-title">The Brieflee Platform</div>' +
-      '<div class="mega-menu__preview-desc">One workspace for legal research, analysis, and drafting — built for the way lawyers actually work.</div>';
+      '<div class="mega-menu__preview-title">' + t.captionTitle + '</div>' +
+      '<div class="mega-menu__preview-desc">' + t.captionDesc + '</div>';
 
     preview.appendChild(imgContainer);
     preview.appendChild(caption);
