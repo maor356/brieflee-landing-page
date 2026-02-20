@@ -6,6 +6,7 @@ Handles:
     POST /unsubscribe?token=<token>  — same (supports List-Unsubscribe-Post one-click)
     GET  /unsubscribe/status         — JSON health check + stats
     GET  /track/open?token=<t>&v=<n> — records email open, fires Mixpanel event, returns 1x1 GIF
+    GET  /track/click?url=<u>&token=<t>&v=<n> — records link click, fires Mixpanel event, 302 redirects
 """
 
 import base64
@@ -105,6 +106,20 @@ def init_db():
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_opens_token ON email_opens(token)"
     )
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS email_clicks (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            token       TEXT NOT NULL,
+            variation   INTEGER,
+            url         TEXT NOT NULL,
+            clicked_at  TEXT NOT NULL,
+            ip          TEXT,
+            user_agent  TEXT
+        )
+    """)
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_clicks_token ON email_clicks(token)"
+    )
     conn.commit()
     conn.close()
 
@@ -142,18 +157,31 @@ def record_open(token: str, variation: int | None, ip: str, user_agent: str) -> 
         conn.close()
 
 
-def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None = None, name: str | None = None) -> None:
-    """Send 'Email Opened' event + user profile to Mixpanel via HTTP API (non-blocking)."""
+def record_click(token: str, variation: int | None, url: str, ip: str, user_agent: str) -> None:
+    conn = sqlite3.connect(str(DB_PATH))
+    try:
+        conn.execute(
+            "INSERT INTO email_clicks (token, variation, url, clicked_at, ip, user_agent) VALUES (?, ?, ?, ?, ?, ?)",
+            (token, variation, url, datetime.utcnow().isoformat(), ip, user_agent),
+        )
+        conn.commit()
+    except Exception:
+        pass
+    finally:
+        conn.close()
+
+
+def fire_mixpanel(event_name: str, token: str, variation: int | None, ip: str, email: str | None = None, name: str | None = None, extra_props: dict | None = None) -> None:
+    """Send event + user profile to Mixpanel via HTTP API (non-blocking)."""
     import os
     mp_token = os.environ.get("MIXPANEL_TOKEN") or MIXPANEL_TOKEN
     if not mp_token or mp_token == "REPLACE_WITH_MIXPANEL_TOKEN":
         return
 
-    # Use email as distinct_id if available (more readable in Mixpanel), fall back to token
     distinct_id = email or token
 
     event_data = {
-        "event": "Email Opened",
+        "event": event_name,
         "properties": {
             "token": mp_token,
             "distinct_id": distinct_id,
@@ -167,8 +195,9 @@ def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None 
         event_data["properties"]["$email"] = email
     if name:
         event_data["properties"]["$name"] = name
+    if extra_props:
+        event_data["properties"].update(extra_props)
 
-    # People profile data — creates/updates the user in Mixpanel People
     people_data = {
         "$token": mp_token,
         "$distinct_id": distinct_id,
@@ -181,11 +210,9 @@ def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None 
         people_data["$set"]["$name"] = name
     if variation is not None:
         people_data["$set"]["last_variation"] = variation
-    people_data["$set"]["last_open"] = datetime.utcnow().isoformat()
 
     def _send():
         try:
-            # Track event
             track_payload = base64.b64encode(json.dumps([event_data]).encode()).decode()
             req = Request(
                 f"https://api-eu.mixpanel.com/track?verbose=1&data={track_payload}",
@@ -193,7 +220,6 @@ def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None 
             )
             urlopen(req, timeout=5)
 
-            # Set people profile
             people_payload = base64.b64encode(json.dumps([people_data]).encode()).decode()
             req2 = Request(
                 f"https://api-eu.mixpanel.com/engage?verbose=1&data={people_payload}",
@@ -211,11 +237,15 @@ def get_stats() -> dict:
     unsub_count = conn.execute("SELECT COUNT(*) FROM unsubscribes").fetchone()[0]
     open_count = conn.execute("SELECT COUNT(*) FROM email_opens").fetchone()[0]
     unique_opens = conn.execute("SELECT COUNT(DISTINCT token) FROM email_opens").fetchone()[0]
+    click_count = conn.execute("SELECT COUNT(*) FROM email_clicks").fetchone()[0]
+    unique_clicks = conn.execute("SELECT COUNT(DISTINCT token) FROM email_clicks").fetchone()[0]
     conn.close()
     return {
         "total_unsubscribes": unsub_count,
         "total_opens": open_count,
         "unique_opens": unique_opens,
+        "total_clicks": click_count,
+        "unique_clicks": unique_clicks,
         "status": "ok",
     }
 
@@ -237,7 +267,7 @@ class Handler(BaseHTTPRequestHandler):
 
             if token and len(token) >= 10:
                 record_open(token, variation, ip, user_agent)
-                fire_mixpanel(token, variation, ip, email=email, name=name)
+                fire_mixpanel("Email Opened", token, variation, ip, email=email, name=name)
 
             # Always return the GIF regardless of token validity
             self.send_response(200)
@@ -248,6 +278,29 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Expires", "0")
             self.end_headers()
             self.wfile.write(TRACKING_GIF)
+            return
+
+        # ── Click tracking redirect ──
+        if parsed.path == "/track/click":
+            params = parse_qs(parsed.query)
+            url = params.get("url", [None])[0]
+            token = params.get("token", [None])[0]
+            variation_str = params.get("v", [None])[0]
+            variation = int(variation_str) if variation_str and variation_str.isdigit() else None
+            email = params.get("email", [None])[0]
+            name = params.get("name", [None])[0]
+            ip = self.headers.get("X-Real-IP") or (self.client_address[0] if self.client_address else "")
+            user_agent = self.headers.get("User-Agent", "")
+
+            if token and len(token) >= 10 and url:
+                record_click(token, variation, url, ip, user_agent)
+                fire_mixpanel("Link Clicked", token, variation, ip, email=email, name=name, extra_props={"url": url})
+
+            # 302 redirect to the actual URL
+            redirect_url = url or "https://brieflee.be"
+            self.send_response(302)
+            self.send_header("Location", redirect_url)
+            self.end_headers()
             return
 
         # ── Status / health check ──
