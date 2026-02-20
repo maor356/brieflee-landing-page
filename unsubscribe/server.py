@@ -250,6 +250,36 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(TRACKING_GIF)
             return
 
+        # ── Debug: test Mixpanel connection (remove after testing) ──
+        if parsed.path == "/track/debug":
+            import os
+            mp_token = os.environ.get("MIXPANEL_TOKEN") or MIXPANEL_TOKEN
+            token_status = "placeholder" if mp_token == "REPLACE_WITH_MIXPANEL_TOKEN" else f"set ({mp_token[:6]}...)"
+            result = {"mixpanel_token": token_status}
+            try:
+                test_event = {
+                    "event": "Debug Test",
+                    "properties": {
+                        "token": mp_token,
+                        "distinct_id": "debug-test",
+                    },
+                }
+                payload = base64.b64encode(json.dumps([test_event]).encode()).decode()
+                req = Request(
+                    f"https://api-eu.mixpanel.com/track?verbose=1&data={payload}",
+                    method="GET",
+                )
+                resp = urlopen(req, timeout=10)
+                result["mixpanel_response"] = resp.read().decode()
+            except Exception as e:
+                result["mixpanel_error"] = str(e)
+            data = json.dumps(result)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(data.encode())
+            return
+
         # ── Status / health check ──
         if parsed.path == "/unsubscribe/status":
             data = json.dumps(get_stats())
