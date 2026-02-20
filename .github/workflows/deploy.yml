@@ -31,9 +31,6 @@ jobs:
             # Inject Slack webhook URL into config
             sed -i \"s|REPLACE_WITH_SLACK_WEBHOOK|${SLACK_WEBHOOK}|g\" js/config.js &&
 
-            # Inject Mixpanel token into unsubscribe/tracking server
-            sed -i \"s|REPLACE_WITH_MIXPANEL_TOKEN|${MIXPANEL_TOKEN}|g\" unsubscribe/server.py &&
-
             # Set the correct root path in nginx config
             sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" nginx/brieflee.conf &&
 
@@ -42,8 +39,9 @@ jobs:
             sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&
             sudo rm -f /etc/nginx/sites-enabled/brieflee.conf &&
 
-            # Set up unsubscribe service
+            # Set up unsubscribe service (inject deploy root + Mixpanel token)
             sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" unsubscribe/brieflee-unsubscribe.service &&
+            sed -i \"s|__MIXPANEL_TOKEN__|${MIXPANEL_TOKEN}|g\" unsubscribe/brieflee-unsubscribe.service &&
             sudo cp unsubscribe/brieflee-unsubscribe.service /etc/systemd/system/brieflee-unsubscribe.service &&
             sudo systemctl daemon-reload &&
             sudo systemctl enable brieflee-unsubscribe &&
