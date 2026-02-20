@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/nl-be", "destination": "/nl-be/index.html" },
+    { "source": "/fr-be", "destination": "/fr-be/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "**/*.@(js|css|png|jpg|jpeg|svg|ico|woff|woff2)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }]
+    }
+  ]
+}
