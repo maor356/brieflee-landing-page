@@ -310,12 +310,31 @@ body {
             <div>Kies een plan dat past bij je team, van individueel tot ondernemingsniveau.</div>
           </div>
         </div>
+        <div class="pricing-toggle" style="display:flex; justify-content:center;">
+          <div style="display:inline-flex; gap:2px; padding:4px; border:1px solid rgba(0,0,0,0.08); border-radius:999px; background:rgba(0,0,0,0.03);">
+            <button class="pricing-toggle-btn active" data-period="monthly"
+              style="display:flex; align-items:center; justify-content:center; height:36px; padding:0 20px;
+                     font-family:var(--fonts--heading-font); font-size:14px; font-weight:500; border:none; border-radius:999px; cursor:pointer;
+                     background:var(--colors-interface--dark); color:#fff;
+                     transition: background-color 0.2s ease, color 0.2s ease;">
+              Maandelijks
+            </button>
+            <button class="pricing-toggle-btn" data-period="yearly"
+              style="display:flex; align-items:center; justify-content:center; height:36px; padding:0 20px;
+                     font-family:var(--fonts--heading-font); font-size:14px; font-weight:500; border:none; border-radius:999px; cursor:pointer;
+                     background:transparent; color:rgba(0,0,0,0.55);
+                     transition: background-color 0.2s ease, color 0.2s ease;">
+              Jaarlijks&nbsp;<span style="color:var(--colors-brand--gradient-1); font-weight:600;">-20%</span>
+            </button>
+          </div>
+        </div>
         <div class="pricing-grid">
           <div class="plan">
             <div class="plan-title">
               <div class="heading-h3">Basic</div>
-              <div class="heading-h3 faded-heading">€99/month</div>
+              <div class="heading-h3 faded-heading" data-monthly="€99/maand" data-yearly="€79/maand">€99/maand</div>
             </div>
+            <div class="pricing-yearly-note" style="display:none; font-family:var(--fonts--heading-font); font-size:13px; color:rgba(0,0,0,0.4); margin-top:-44px; margin-bottom:0;">jaarlijks gefactureerd</div>
             <div class="bold-text plan-description">Essentiële tools voor solo-advocaten en kleine teams.</div>
             <a data-wf--button--variant="base" href="contact.html" class="button w-inline-block">
               <div class="button-text-wrapper">
@@ -336,8 +355,9 @@ body {
           <div class="plan">
             <div class="plan-title">
               <div class="heading-h3">Growth</div>
-              <div class="heading-h3 faded-heading">€249/month</div>
+              <div class="heading-h3 faded-heading" data-monthly="€249/maand" data-yearly="€199/maand">€249/maand</div>
             </div>
+            <div class="pricing-yearly-note" style="display:none; font-family:var(--fonts--heading-font); font-size:13px; color:rgba(0,0,0,0.4); margin-top:-44px; margin-bottom:0;">jaarlijks gefactureerd</div>
             <div class="bold-text plan-description">Onbeperkte toegang en prioritaire ondersteuning voor groeiende kantoren.</div>
             <a href="contact.html" class="button gradient-button w-inline-block">
               <div data-wf--graphic-background--focal-point="bottom-left" class="graphic-canvas w-variant-6d12e9b3-b91b-77c1-6801-e9e3727c5f6c"></div>
@@ -664,7 +684,32 @@ body {
   <script src="../js/mega-menu.js" type="text/javascript"></script>
   <script src="../js/feature-showcase.js" type="text/javascript"></script>
   <script>
-  document.addEventListener("DOMContentLoaded",function(){var b=document.querySelector(".brieflee-demo-banner");if(b){new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){b.classList.add("is-visible")}})},{threshold:0.15}).observe(b)}document.querySelectorAll('a[href="#request-demo"]').forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();var t=document.getElementById("request-demo");if(!t)return;var s=window.pageYOffset,end=t.getBoundingClientRect().top+s-20,d=end-s,start=null;function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/350,1);p=p<.5?2*p*p:(4-2*p)*p-1;window.scrollTo(0,s+d*p);if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)})})});
+  document.addEventListener("DOMContentLoaded",function(){
+    document.querySelectorAll('.pricing-toggle-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var period = this.dataset.period;
+        document.querySelectorAll('.pricing-toggle-btn').forEach(function(b) {
+          b.style.background = 'transparent';
+          b.style.color = 'rgba(0,0,0,0.55)';
+          b.classList.remove('active');
+        });
+        this.style.background = 'var(--colors-interface--dark)';
+        this.style.color = '#fff';
+        this.classList.add('active');
+        document.querySelectorAll('[data-monthly]').forEach(function(el) {
+          el.style.transition = 'opacity 0.2s';
+          el.style.opacity = '0';
+          setTimeout(function() {
+            el.textContent = el.dataset[period];
+            el.style.opacity = '1';
+          }, 200);
+        });
+        document.querySelectorAll('.pricing-yearly-note').forEach(function(note) {
+          note.style.display = period === 'yearly' ? 'block' : 'none';
+        });
+      });
+    });
+    var b=document.querySelector(".brieflee-demo-banner");if(b){new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){b.classList.add("is-visible")}})},{threshold:0.15}).observe(b)}document.querySelectorAll('a[href="#request-demo"]').forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();var t=document.getElementById("request-demo");if(!t)return;var s=window.pageYOffset,end=t.getBoundingClientRect().top+s-20,d=end-s,start=null;function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/350,1);p=p<.5?2*p*p:(4-2*p)*p-1;window.scrollTo(0,s+d*p);if(p<1)requestAnimationFrame(step)}requestAnimationFrame(step)})})});
   </script>
   <script src="../js/lang-map.js" type="text/javascript"></script>
   <script src="../js/lang-switcher.js" type="text/javascript"></script>
