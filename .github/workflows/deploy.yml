@@ -21,6 +21,7 @@ jobs:
       - name: Deploy to EC2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
             cd ${{ secrets.EC2_PATH }} &&
@@ -29,6 +30,9 @@ jobs:
 
             # Inject Slack webhook URL into config
             sed -i \"s|REPLACE_WITH_SLACK_WEBHOOK|${SLACK_WEBHOOK}|g\" js/config.js &&
+
+            # Inject Mixpanel token into unsubscribe/tracking server
+            sed -i \"s|REPLACE_WITH_MIXPANEL_TOKEN|${MIXPANEL_TOKEN}|g\" unsubscribe/server.py &&
 
             # Set the correct root path in nginx config
             sed -i \"s|__DEPLOY_ROOT__|${{ secrets.EC2_PATH }}|g\" nginx/brieflee.conf &&

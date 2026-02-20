@@ -1,22 +1,34 @@
 #!/usr/bin/env python3
-"""Lightweight unsubscribe handler. Runs as a systemd service on EC2.
+"""Lightweight unsubscribe + email tracking handler. Runs as a systemd service on EC2.
 
 Handles:
     GET  /unsubscribe?token=<token>  — marks lawyer as unsubscribed, shows confirmation
     POST /unsubscribe?token=<token>  — same (supports List-Unsubscribe-Post one-click)
     GET  /unsubscribe/status         — JSON health check + stats
+    GET  /track/open?token=<t>&v=<n> — records email open, fires Mixpanel event, returns 1x1 GIF
 """
 
+import base64
 import json
 import sqlite3
 import sys
+import threading
 from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
+from urllib.request import Request, urlopen
 
 DB_PATH = Path(__file__).resolve().parent / "unsubscribes.db"
 PORT = 8900
+
+# Mixpanel project token — replaced at deploy time via sed, or set env var MIXPANEL_TOKEN
+MIXPANEL_TOKEN = "REPLACE_WITH_MIXPANEL_TOKEN"
+
+# 1x1 transparent GIF (43 bytes)
+TRACKING_GIF = base64.b64decode(
+    "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+)
 
 CONFIRM_HTML = """<!DOCTYPE html>
 <html lang="fr">
@@ -80,6 +92,19 @@ def init_db():
             ip          TEXT
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS email_opens (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            token       TEXT NOT NULL,
+            variation   INTEGER,
+            opened_at   TEXT NOT NULL,
+            ip          TEXT,
+            user_agent  TEXT
+        )
+    """)
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_opens_token ON email_opens(token)"
+    )
     conn.commit()
     conn.close()
 
@@ -103,17 +128,129 @@ def unsubscribe(token: str, ip: str = "") -> bool:
         conn.close()
 
 
+def record_open(token: str, variation: int | None, ip: str, user_agent: str) -> None:
+    conn = sqlite3.connect(str(DB_PATH))
+    try:
+        conn.execute(
+            "INSERT INTO email_opens (token, variation, opened_at, ip, user_agent) VALUES (?, ?, ?, ?, ?)",
+            (token, variation, datetime.utcnow().isoformat(), ip, user_agent),
+        )
+        conn.commit()
+    except Exception:
+        pass
+    finally:
+        conn.close()
+
+
+def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None = None, name: str | None = None) -> None:
+    """Send 'Email Opened' event + user profile to Mixpanel via HTTP API (non-blocking)."""
+    import os
+    mp_token = os.environ.get("MIXPANEL_TOKEN") or MIXPANEL_TOKEN
+    if not mp_token or mp_token == "REPLACE_WITH_MIXPANEL_TOKEN":
+        return
+
+    # Use email as distinct_id if available (more readable in Mixpanel), fall back to token
+    distinct_id = email or token
+
+    event_data = {
+        "event": "Email Opened",
+        "properties": {
+            "token": mp_token,
+            "distinct_id": distinct_id,
+            "ip": ip,
+            "$ip": ip,
+        },
+    }
+    if variation is not None:
+        event_data["properties"]["variation"] = variation
+    if email:
+        event_data["properties"]["$email"] = email
+    if name:
+        event_data["properties"]["$name"] = name
+
+    # People profile data — creates/updates the user in Mixpanel People
+    people_data = {
+        "$token": mp_token,
+        "$distinct_id": distinct_id,
+        "$ip": ip,
+        "$set": {},
+    }
+    if email:
+        people_data["$set"]["$email"] = email
+    if name:
+        people_data["$set"]["$name"] = name
+    if variation is not None:
+        people_data["$set"]["last_variation"] = variation
+    people_data["$set"]["last_open"] = datetime.utcnow().isoformat()
+
+    def _send():
+        try:
+            # Track event
+            track_payload = base64.b64encode(json.dumps([event_data]).encode()).decode()
+            req = Request(
+                f"https://api.mixpanel.com/track?verbose=1&data={track_payload}",
+                method="GET",
+            )
+            urlopen(req, timeout=5)
+
+            # Set people profile
+            people_payload = base64.b64encode(json.dumps([people_data]).encode()).decode()
+            req2 = Request(
+                f"https://api.mixpanel.com/engage?verbose=1&data={people_payload}",
+                method="GET",
+            )
+            urlopen(req2, timeout=5)
+        except Exception:
+            pass
+
+    threading.Thread(target=_send, daemon=True).start()
+
+
 def get_stats() -> dict:
     conn = sqlite3.connect(str(DB_PATH))
-    count = conn.execute("SELECT COUNT(*) FROM unsubscribes").fetchone()[0]
+    unsub_count = conn.execute("SELECT COUNT(*) FROM unsubscribes").fetchone()[0]
+    open_count = conn.execute("SELECT COUNT(*) FROM email_opens").fetchone()[0]
+    unique_opens = conn.execute("SELECT COUNT(DISTINCT token) FROM email_opens").fetchone()[0]
     conn.close()
-    return {"total_unsubscribes": count, "status": "ok"}
+    return {
+        "total_unsubscribes": unsub_count,
+        "total_opens": open_count,
+        "unique_opens": unique_opens,
+        "status": "ok",
+    }
 
 
 class Handler(BaseHTTPRequestHandler):
     def _handle(self):
         parsed = urlparse(self.path)
 
+        # ── Tracking pixel ──
+        if parsed.path == "/track/open":
+            params = parse_qs(parsed.query)
+            token = params.get("token", [None])[0]
+            variation_str = params.get("v", [None])[0]
+            variation = int(variation_str) if variation_str and variation_str.isdigit() else None
+            email = params.get("email", [None])[0]
+            name = params.get("name", [None])[0]
+            ip = self.headers.get("X-Real-IP") or (self.client_address[0] if self.client_address else "")
+            user_agent = self.headers.get("User-Agent", "")
+
+            if token and len(token) >= 10:
+                record_open(token, variation, ip, user_agent)
+                fire_mixpanel(token, variation, ip, email=email, name=name)
+
+            # Always return the GIF regardless of token validity
+            self.send_response(200)
+            self.send_header("Content-Type", "image/gif")
+            self.send_header("Content-Length", str(len(TRACKING_GIF)))
+            self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+            self.end_headers()
+            self.wfile.write(TRACKING_GIF)
+            return
+
+        # ── Status / health check ──
         if parsed.path == "/unsubscribe/status":
             data = json.dumps(get_stats())
             self.send_response(200)
