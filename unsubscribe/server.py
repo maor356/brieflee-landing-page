@@ -188,7 +188,7 @@ def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None 
             # Track event
             track_payload = base64.b64encode(json.dumps([event_data]).encode()).decode()
             req = Request(
-                f"https://api.mixpanel.com/track?verbose=1&data={track_payload}",
+                f"https://api-eu.mixpanel.com/track?verbose=1&data={track_payload}",
                 method="GET",
             )
             urlopen(req, timeout=5)
@@ -196,7 +196,7 @@ def fire_mixpanel(token: str, variation: int | None, ip: str, email: str | None 
             # Set people profile
             people_payload = base64.b64encode(json.dumps([people_data]).encode()).decode()
             req2 = Request(
-                f"https://api.mixpanel.com/engage?verbose=1&data={people_payload}",
+                f"https://api-eu.mixpanel.com/engage?verbose=1&data={people_payload}",
                 method="GET",
             )
             urlopen(req2, timeout=5)
